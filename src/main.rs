@@ -5,11 +5,24 @@ use raytracer::ray::Ray;
 use raytracer::vec3::{Point3, Vec3};
 use raytracer::ppm::create_ppm;
 
+fn hit_sphere(center: &Point3, radius: f64, r: &Ray) -> bool {
+    let oc = r.get_origin() - *center;
+    let a = r.get_direction().dot(r.get_direction());
+    let b = 2.0 * oc.dot(r.get_direction());
+    let c = oc.dot(oc) - radius.powi(2);
+    let discriminant = b.powi(2) - (4.0 * a *c);
+    discriminant > 0.0
+}
+
 fn ray_color(r: &Ray) -> Color {
-    let unit_dir = r.get_direction().unit_vector();
-    let t = 0.5 * (unit_dir.get_y() + 1.0);
-    let cv = ((1.0 - t) * Vec3::new(1.0, 1.0, 1.0)) + (t * Vec3::new(0.5, 0.7, 1.0));
-    Color::try_from(cv).unwrap()
+    if hit_sphere(&Point3::new(0.0, 0.0, -1.0), 0.5, r) {
+        Color::new(255, 0, 0)
+    } else {
+        let unit_dir = r.get_direction().unit_vector();
+        let t = 0.5 * (unit_dir.get_y() + 1.0);
+        let cv = ((1.0 - t) * Vec3::new(1.0, 1.0, 1.0)) + (t * Vec3::new(0.5, 0.7, 1.0));
+        Color::try_from(cv).unwrap()
+    }
 }
 
 fn main() {
