@@ -15,19 +15,19 @@ impl Color {
         Color { red, blue, green }
     }
 
-    pub fn write_color<W: Write>(self, mut writer: W) -> std::io::Result<()>{
+    pub fn write_color<W: Write>(&self, mut writer: W) -> std::io::Result<()>{
         writeln!(&mut writer, "{} {} {}", self.red, self.blue, self.green)
     }
 
-    pub fn get_red(self) -> u8 {
+    pub fn get_red(&self) -> u8 {
         self.red
     }
 
-    pub fn get_blue(self) -> u8 {
+    pub fn get_blue(&self) -> u8 {
         self.blue
     }
 
-    pub fn get_green(self) -> u8 {
+    pub fn get_green(&self) -> u8 {
         self.green
     }
 }

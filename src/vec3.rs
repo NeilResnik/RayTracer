@@ -10,16 +10,18 @@ pub struct Vec3 {
     z: f64
 }
 
+pub type Point3 = Vec3;
+
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { x, y, z}
     }
 
-    pub fn dot(self, rhs: Vec3) -> f64 {
+    pub fn dot(&self, rhs: Vec3) -> f64 {
         (self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
     }
 
-    pub fn cross(self, rhs: Vec3) -> Vec3 {
+    pub fn cross(&self, rhs: Vec3) -> Vec3 {
         Vec3 {
             x: (self.y * rhs.z) - (self.z * rhs.y),
             y: (self.z * rhs.x) - (self.x * rhs.z),
@@ -27,16 +29,28 @@ impl Vec3 {
         }
     }
 
-    pub fn get_x(self) -> f64 {
+    pub fn get_x(&self) -> f64 {
         self.x
     }
 
-    pub fn get_y(self) -> f64 {
+    pub fn get_y(&self) -> f64 {
         self.y
     }
 
-    pub fn get_z(self) -> f64 {
+    pub fn get_z(&self) -> f64 {
         self.z
+    }
+
+    pub fn length(&self) -> f64 {
+        self.length_squared().sqrt()
+    }
+
+    pub fn length_squared(&self) -> f64 {
+        self.x.powi(2) + self.y.powi(2) + self.z.powi(2)
+    }
+
+    pub fn unit_vector(&self) -> Vec3 {
+        return *self / self.length();
     }
 }
 
@@ -114,6 +128,18 @@ impl Mul<f64> for Vec3 {
             x: self.x * factor,
             y: self.y * factor,
             z: self.z * factor
+        }
+    }
+}
+
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z
         }
     }
 }
