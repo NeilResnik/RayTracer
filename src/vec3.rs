@@ -1,5 +1,5 @@
 use std::convert::From;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 use super::color::Color;
 
@@ -17,11 +17,11 @@ impl Vec3 {
         Vec3 { x, y, z}
     }
 
-    pub fn dot(&self, rhs: Vec3) -> f64 {
+    pub fn dot(&self, rhs: &Vec3) -> f64 {
         (self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
     }
 
-    pub fn cross(&self, rhs: Vec3) -> Vec3 {
+    pub fn cross(&self, rhs: &Vec3) -> Vec3 {
         Vec3 {
             x: (self.y * rhs.z) - (self.z * rhs.y),
             y: (self.z * rhs.x) - (self.x * rhs.z),
@@ -173,6 +173,14 @@ impl MulAssign for Vec3 {
             y: self.y * rhs.y,
             z: self.z * rhs.z
         };
+    }
+}
+
+impl Neg for Vec3 {
+    type Output = Self;
+
+    fn neg(self) -> Vec3 {
+        -1.0 * self
     }
 }
 
