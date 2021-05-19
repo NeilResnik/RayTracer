@@ -27,9 +27,8 @@ fn main() {
     let image_height = (image_width as f64 / aspect_ratio) as i32;
 
     // World
-    let mut world: Vec<Box<dyn Hittable>> = Vec::new();
-    world.push(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)));
-    world.push(Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)));
+    let world = vec!(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5),
+                     Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0));
 
     // Camera
     let viewport_height = 2.0;

@@ -49,15 +49,21 @@ pub trait Hittable {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }
 
-// TODO: Implement for all iterators, not just vecs
-// The fucking iterator trait seems to be a headache here since 
-// it requires mutable self but hit doesn't
-// Maybe ask on a forum
-// We come back to this
-// We aren't done here
-// Fuck you language
-//impl Hittable for dyn Iterator<Item = &Box<dyn Hittable>> {
 impl Hittable for Vec<Box<dyn Hittable>> {
+    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+        let mut rec = None;
+        let mut closest = t_max;
+        for obj in self.iter() {
+            if let Some(hr) = obj.hit(r, t_min, closest) {
+                closest = hr.get_t();
+                rec = Some(hr);
+            }
+        }
+        rec
+    }
+}
+
+impl<T: Hittable> Hittable for Vec<T> {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let mut rec = None;
         let mut closest = t_max;
