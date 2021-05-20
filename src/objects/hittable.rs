@@ -1,31 +1,36 @@
+use std::boxed::Box;
 use std::option::Option;
 //use std::iter::Iterator;
+use std::rc::Rc;
 use std::vec::Vec;
 
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+use crate::objects::material::Material;
+
+#[derive(Clone)]
 pub struct HitRecord {
     point: Point3,
     normal: Vec3,
+    material: Rc<dyn Material>,
     t: f64,
     front_face: bool
 }
 
 impl HitRecord {
-    pub fn new(point: Point3, normal: Vec3, t: f64, front_face: bool) -> HitRecord {
-        HitRecord{ point, normal, t, front_face }
+    pub fn new(point: Point3, normal: Vec3, material: Rc<dyn Material>, t: f64, front_face: bool) -> HitRecord {
+        HitRecord{ point, normal, material, t, front_face }
     }
 
-    pub fn from_outward_normal(point: Point3, t: f64, r: &Ray, outward_normal: Vec3) -> HitRecord {
+    pub fn from_outward_normal(point: Point3, t: f64, r: &Ray, outward_normal: Vec3, material: Rc<dyn Material>) -> HitRecord {
         let front_face = r.get_direction().dot(&outward_normal) < 0.0;
         let normal = if front_face {
             outward_normal
         } else {
             -outward_normal
         };
-        HitRecord::new(point, normal, t, front_face)
+        HitRecord::new(point, normal, material, t, front_face)
     }
 
     pub fn get_point(&self) -> Point3 {
@@ -34,6 +39,10 @@ impl HitRecord {
 
     pub fn get_normal(&self) -> Vec3 {
         self.normal
+    }
+
+    pub fn get_material(&self) -> Rc<dyn Material> {
+        self.material.clone()
     }
 
     pub fn get_t(&self) -> f64 {

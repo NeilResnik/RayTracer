@@ -1,7 +1,7 @@
 
 pub mod camera;
 pub mod color;
-pub mod hittables;
+pub mod objects;
 pub mod ppm;
 pub mod ray;
 pub mod vec3;

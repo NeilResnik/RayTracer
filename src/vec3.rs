@@ -85,6 +85,14 @@ impl Vec3 {
         self.y = (self.y * scale).sqrt().clamp(min, max);
         self.z = (self.z * scale).sqrt().clamp(min, max);
     }
+
+    pub fn near_zero(&self) -> bool {
+        self.x.abs() < 1e-8 && self.y.abs() < 1e-8 && self.z.abs() < 1e-8
+    }
+
+    pub fn reflect(&self, normal: &Vec3) -> Vec3 {
+        *self - (2.0 * self.dot(normal) * *normal)
+    }
 }
 
 impl Add for Vec3 {
