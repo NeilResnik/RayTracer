@@ -1,6 +1,8 @@
 use std::convert::From;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
+use rand::{Rng, thread_rng};
+
 use super::color::Color;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -15,6 +17,31 @@ pub type Point3 = Vec3;
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { x, y, z}
+    }
+
+    pub fn random(min: f64, max: f64) -> Vec3 {
+        Vec3::random_with_gen(&mut thread_rng(), min, max)
+    }
+
+    pub fn random_with_gen<R: Rng>(rng: &mut R, min: f64, max: f64) -> Vec3 {
+        Vec3 {
+            x: rng.gen_range(min..max),
+            y: rng.gen_range(min..max),
+            z: rng.gen_range(min..max),
+        }
+    }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        Vec3::random_in_unit_sphere_with_gen(&mut thread_rng())
+    }
+
+    pub fn random_in_unit_sphere_with_gen<R: Rng>(rng: &mut R) -> Vec3 {
+        loop {
+            let p = Vec3::random_with_gen(rng, -1.0, 1.0);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
     }
 
     pub fn dot(&self, rhs: &Vec3) -> f64 {
@@ -54,9 +81,9 @@ impl Vec3 {
     }
 
     pub fn scale_in_range(&mut self, scale: f64, min: f64, max: f64) {
-        self.x = (self.x * scale).clamp(min, max);
-        self.y = (self.y * scale).clamp(min, max);
-        self.z = (self.z * scale).clamp(min, max);
+        self.x = (self.x * scale).sqrt().clamp(min, max);
+        self.y = (self.y * scale).sqrt().clamp(min, max);
+        self.z = (self.z * scale).sqrt().clamp(min, max);
     }
 }
 
