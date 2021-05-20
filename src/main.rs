@@ -10,9 +10,7 @@ use raytracer::vec3::Vec3;
 use raytracer::hittables::hittable::Hittable;
 use raytracer::hittables::sphere::Sphere;
 
-fn ray_color_vec<W, R>(r: &Ray, world: &W, rng: &mut R, depth: i32) 
--> Vec3
-where W: Hittable, R: rand::Rng 
+fn ray_color_vec<R: rand::Rng>(r: &Ray, world: &dyn Hittable, rng: &mut R, depth: i32) -> Vec3
 {
     if depth <= 0 {
         Vec3::new(0.0, 0.0, 0.0)
