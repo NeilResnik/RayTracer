@@ -41,8 +41,8 @@ fn main() {
     // World
     let ground_material = Rc::new(Lambertian::new(Color::new(204, 204, 0)));
     let center_material = Rc::new(Lambertian::new(Color::new(179, 76, 76)));
-    let left_material = Rc::new(Metal::new(Color::new(204, 204, 204)));
-    let right_material = Rc::new(Metal::new(Color::new(204, 153, 51)));
+    let left_material = Rc::new(Metal::new(Color::new(204, 204, 204), 0.3));
+    let right_material = Rc::new(Metal::new(Color::new(204, 153, 51), 1.0));
 
     let world = vec!(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, ground_material),
                      Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, center_material),
