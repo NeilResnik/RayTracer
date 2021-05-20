@@ -52,6 +52,12 @@ impl Vec3 {
     pub fn unit_vector(&self) -> Vec3 {
         return *self / self.length();
     }
+
+    pub fn scale_in_range(&mut self, scale: f64, min: f64, max: f64) {
+        self.x = (self.x * scale).clamp(min, max);
+        self.y = (self.y * scale).clamp(min, max);
+        self.z = (self.z * scale).clamp(min, max);
+    }
 }
 
 impl Add for Vec3 {
@@ -223,7 +229,7 @@ mod tests {
         let p1 = Vec3::new(35.0, 43.0, 55.0);
         let p2 = Vec3::new(43.0, 67.0, 83.0);
         let expected = (35.0 * 43.0) + (43.0 * 67.0) + (55.0 * 83.0);
-        assert_eq!(p1.dot(p2), expected);
+        assert_eq!(p1.dot(&p2), expected);
     }
 
     #[test]
@@ -233,7 +239,7 @@ mod tests {
         let expected = Vec3::new((43.0 * 83.0) - (55.0 * 67.0),
                                    (55.0 * 43.0) - (35.0 * 83.0),
                                    (35.0 * 67.0) - (43.0 * 43.0));
-        assert_eq!(p1.cross(p2), expected);
+        assert_eq!(p1.cross(&p2), expected);
     }
 
     #[test]
