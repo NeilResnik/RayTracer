@@ -8,6 +8,7 @@ use raytracer::ppm::create_ppm;
 use raytracer::ray::Ray;
 use raytracer::vec3::Vec3;
 
+use raytracer::objects::dielectric::Dielectric;
 use raytracer::objects::hittable::Hittable;
 use raytracer::objects::lambertian::Lambertian;
 use raytracer::objects::metal::Metal;
@@ -40,14 +41,15 @@ fn main() {
 
     // World
     let ground_material = Rc::new(Lambertian::new(Color::new(204, 204, 0)));
-    let center_material = Rc::new(Lambertian::new(Color::new(179, 76, 76)));
-    let left_material = Rc::new(Metal::new(Color::new(204, 204, 204), 0.3));
-    let right_material = Rc::new(Metal::new(Color::new(204, 153, 51), 1.0));
+    let center_material = Rc::new(Lambertian::new(Color::new(25, 51, 128)));
+    let left_material = Rc::new(Dielectric::new(1.5));
+    let right_material = Rc::new(Metal::new(Color::new(204, 153, 51), 0.0));
 
-    let world = vec!(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, ground_material),
-                     Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, center_material),
-                     Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 0.5, left_material),
-                     Sphere::new(Vec3::new(1.0, 0.0, -1.0), 0.5, right_material));
+    let world = vec!(Sphere::new(Vec3::new( 0.0, -100.5, -1.0), 100.0, ground_material),
+                     Sphere::new(Vec3::new( 0.0,    0.0, -1.0),   0.5, center_material),
+                     Sphere::new(Vec3::new(-1.0,    0.0, -1.0),   0.5, left_material.clone()),
+                     Sphere::new(Vec3::new(-1.0,    0.0, -1.0),  -0.4, left_material),
+                     Sphere::new(Vec3::new( 1.0,    0.0, -1.0),   0.5, right_material));
 
     // Camera
     let cam = Camera::new();

@@ -1,4 +1,5 @@
 
+pub mod dielectric;
 pub mod hittable;
 pub mod lambertian;
 pub mod material;
