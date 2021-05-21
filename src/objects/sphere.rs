@@ -38,14 +38,18 @@ impl Hittable for Sphere {
         if discriminant < 0.0 {
             return None;
         }
+
         let d_sqrt = discriminant.sqrt();
-        let root = (-half_b - d_sqrt) / a;
+        let mut root = (-half_b - d_sqrt) / a;
         if root < t_min || t_max < root {
-            None
-        } else {
-            let p = r.at(root);
-            let outward_normal = (p - self.center) / self.radius;
-            Some(HitRecord::from_outward_normal(p, root, r, outward_normal, self.material.clone()))
+            root = (-half_b + d_sqrt) / a;
+            if root < t_min || t_max < root {
+                return None;
+            }
         }
+
+        let p = r.at(root);
+        let outward_normal = (p - self.center) / self.radius;
+        Some(HitRecord::from_outward_normal(p, root, r, outward_normal, self.material.clone()))
     }
 }
