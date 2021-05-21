@@ -11,6 +11,7 @@ pub struct Metal {
 }
 
 impl Metal {
+    #[inline(always)]
     pub fn new(albedo: Color, fuzz: f64) -> Metal {
         Metal{ 
             albedo,

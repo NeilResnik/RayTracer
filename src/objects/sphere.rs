@@ -14,14 +14,17 @@ pub struct Sphere {
 }
 
 impl Sphere {
+    #[inline(always)]
     pub fn new(center: Point3, radius: f64, material: Rc<dyn Material>) -> Sphere {
         Sphere{ center, radius, material }
     }
 
+    #[inline(always)]
     pub fn get_center(&self) -> Point3 {
         self.center
     }
 
+    #[inline(always)]
     pub fn get_radius(&self) -> f64 {
         self.radius
     }

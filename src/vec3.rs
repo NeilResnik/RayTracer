@@ -15,15 +15,18 @@ pub struct Vec3 {
 pub type Point3 = Vec3;
 
 impl Vec3 {
+    #[inline(always)]
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { x, y, z}
     }
 
+    #[inline(always)]
     pub fn random(min: f64, max: f64) -> Vec3 {
         Vec3::random_with_gen(&mut thread_rng(), min, max)
     }
 
-    pub fn random_with_gen<R: Rng>(rng: &mut R, min: f64, max: f64) -> Vec3 {
+    #[inline(always)]
+    pub fn random_with_gen<R: Rng + ?Sized>(rng: &mut R, min: f64, max: f64) -> Vec3 {
         Vec3 {
             x: rng.gen_range(min..max),
             y: rng.gen_range(min..max),
@@ -31,11 +34,12 @@ impl Vec3 {
         }
     }
 
+    #[inline(always)]
     pub fn random_in_unit_sphere() -> Vec3 {
         Vec3::random_in_unit_sphere_with_gen(&mut thread_rng())
     }
 
-    pub fn random_in_unit_sphere_with_gen<R: Rng>(rng: &mut R) -> Vec3 {
+    pub fn random_in_unit_sphere_with_gen<R: Rng + ?Sized>(rng: &mut R) -> Vec3 {
         loop {
             let p = Vec3::random_with_gen(rng, -1.0, 1.0);
             if p.length_squared() < 1.0 {
@@ -44,10 +48,26 @@ impl Vec3 {
         }
     }
 
+    #[inline(always)]
+    pub fn random_in_unit_disk() -> Vec3 {
+        Vec3::random_in_unit_disk_with_gen(&mut thread_rng())
+    }
+
+    pub fn random_in_unit_disk_with_gen<R: Rng + ?Sized>(rng: &mut R) -> Vec3 {
+        loop {
+            let p = Vec3::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0), 0.0);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
+
+    #[inline(always)]
     pub fn dot(&self, rhs: &Vec3) -> f64 {
         (self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
     }
 
+    #[inline(always)]
     pub fn cross(&self, rhs: &Vec3) -> Vec3 {
         Vec3 {
             x: (self.y * rhs.z) - (self.z * rhs.y),
@@ -56,30 +76,37 @@ impl Vec3 {
         }
     }
 
+    #[inline(always)]
     pub fn get_x(&self) -> f64 {
         self.x
     }
 
+    #[inline(always)]
     pub fn get_y(&self) -> f64 {
         self.y
     }
 
+    #[inline(always)]
     pub fn get_z(&self) -> f64 {
         self.z
     }
 
+    #[inline(always)]
     pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
 
+    #[inline(always)]
     pub fn length_squared(&self) -> f64 {
         self.x.powi(2) + self.y.powi(2) + self.z.powi(2)
     }
 
+    #[inline(always)]
     pub fn unit_vector(&self) -> Vec3 {
         return *self / self.length();
     }
 
+    #[inline(always)]
     pub fn scale_in_range(&mut self, scale: f64, min: f64, max: f64) {
         self.x = (self.x * scale).sqrt().clamp(min, max);
         self.y = (self.y * scale).sqrt().clamp(min, max);
@@ -90,6 +117,7 @@ impl Vec3 {
         self.x.abs() < 1e-8 && self.y.abs() < 1e-8 && self.z.abs() < 1e-8
     }
 
+    #[inline(always)]
     pub fn reflect(&self, normal: &Vec3) -> Vec3 {
         *self - (2.0 * self.dot(normal) * *normal)
     }

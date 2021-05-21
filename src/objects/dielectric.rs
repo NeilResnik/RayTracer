@@ -13,10 +13,12 @@ pub struct Dielectric {
 }
 
 impl Dielectric {
+    #[inline(always)]
     pub fn new(index_of_refraction: f64) -> Dielectric {
         Dielectric{ index_of_refraction }
     }
 
+    #[inline(always)]
     fn reflectance(&self, cosine: f64, ref_idx: f64) -> f64 {
         // Schlick's approximation for reflectance
         let r0 = ((1.0 - ref_idx) / (1.0 + ref_idx)).powi(2);

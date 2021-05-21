@@ -11,22 +11,27 @@ pub struct Color {
 }
 
 impl Color {
+    #[inline(always)]
     pub fn new(red: u8, green: u8, blue: u8) -> Color {
         Color { red, green, blue }
     }
 
+    #[inline(always)]
     pub fn write_color<W: Write>(&self, mut writer: W) -> std::io::Result<()>{
         writeln!(&mut writer, "{} {} {}", self.red, self.green, self.blue)
     }
 
+    #[inline(always)]
     pub fn get_red(&self) -> u8 {
         self.red
     }
 
+    #[inline(always)]
     pub fn get_blue(&self) -> u8 {
         self.blue
     }
 
+    #[inline(always)]
     pub fn get_green(&self) -> u8 {
         self.green
     }

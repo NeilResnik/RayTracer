@@ -19,6 +19,7 @@ pub struct HitRecord {
 }
 
 impl HitRecord {
+    #[inline(always)]
     pub fn new(point: Point3, normal: Vec3, material: Rc<dyn Material>, t: f64, front_face: bool) -> HitRecord {
         HitRecord{ point, normal, material, t, front_face }
     }
@@ -33,22 +34,27 @@ impl HitRecord {
         HitRecord::new(point, normal, material, t, front_face)
     }
 
+    #[inline(always)]
     pub fn get_point(&self) -> Point3 {
         self.point
     }
 
+    #[inline(always)]
     pub fn get_normal(&self) -> Vec3 {
         self.normal
     }
 
+    #[inline(always)]
     pub fn get_material(&self) -> Rc<dyn Material> {
         self.material.clone()
     }
 
+    #[inline(always)]
     pub fn get_t(&self) -> f64 {
         self.t
     }
 
+    #[inline(always)]
     pub fn is_front_face(&self) -> bool {
         self.front_face
     }

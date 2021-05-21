@@ -52,11 +52,15 @@ fn main() {
                      Sphere::new(Point3::new( 1.0,    0.0, -1.0),   0.5, right_material));
 
     // Camera
-    let cam = Camera::new(Point3::new(-2.0, 2.0, 1.0),
-                          Point3::new(0.0, 0.0, -1.0),
+    let look_from = Point3::new(3.0, 3.0, 2.0);
+    let look_at = Point3::new(0.0, 0.0, -1.0);
+    let cam = Camera::new(look_from,
+                          look_at,
                           Vec3::new(0.0, 1.0, 0.0),
                           20.0,
-                          aspect_ratio);
+                          aspect_ratio,
+                          2.0,
+                          (look_from - look_at).length());
 
     // RNG
     let mut rng = rand::thread_rng();
