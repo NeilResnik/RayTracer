@@ -6,17 +6,17 @@ use super::vec3::Vec3;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Color {
     red: u8,
-    blue: u8,
-    green: u8
+    green: u8,
+    blue: u8
 }
 
 impl Color {
-    pub fn new(red: u8, blue: u8, green: u8) -> Color {
-        Color { red, blue, green }
+    pub fn new(red: u8, green: u8, blue: u8) -> Color {
+        Color { red, green, blue }
     }
 
     pub fn write_color<W: Write>(&self, mut writer: W) -> std::io::Result<()>{
-        writeln!(&mut writer, "{} {} {}", self.red, self.blue, self.green)
+        writeln!(&mut writer, "{} {} {}", self.red, self.green, self.blue)
     }
 
     pub fn get_red(&self) -> u8 {

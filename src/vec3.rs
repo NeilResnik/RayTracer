@@ -257,8 +257,8 @@ impl SubAssign for Vec3 {
 impl From<Color> for Vec3 {
     fn from(c: Color) -> Self {
         Vec3::new(c.get_red() as f64 / 255.0,
-                  c.get_blue() as f64 / 255.0,
-                  c.get_green() as f64 / 255.0)
+                  c.get_green() as f64 / 255.0,
+                  c.get_blue() as f64 / 255.0)
     }
 }
 
