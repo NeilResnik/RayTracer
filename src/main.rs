@@ -11,8 +11,48 @@ use raytracer::vec3::{Point3, Vec3};
 use raytracer::objects::dielectric::Dielectric;
 use raytracer::objects::hittable::Hittable;
 use raytracer::objects::lambertian::Lambertian;
+use raytracer::objects::material::Material;
 use raytracer::objects::metal::Metal;
 use raytracer::objects::sphere::Sphere;
+
+fn random_scene<R: rand::Rng + ?Sized>(rng: &mut R) -> Vec<Box<dyn Hittable>> {
+    let ground_material = Rc::new(Lambertian::new(Color::new(127, 127, 127)));
+    let mut world: Vec<Box<dyn Hittable>>= vec!(Box::new(Sphere::new(Point3::new(0.0, -1000.0, 0.0), 1000.0, ground_material)));
+
+    for a in -11..11 {
+        for b in -11..11 {
+            let center = Point3::new(a as f64 + (0.9 * rng.gen::<f64>()), 0.2, b as f64 + (0.9 * rng.gen::<f64>()));
+            let mat_roll: f64 = rng.gen();
+            if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
+                let material: Rc<dyn Material> = if mat_roll < 0.8 {
+                    // diffuse
+                    let albedo = Color::try_from(Vec3::random_with_gen(rng, 0.0, 1.0) * Vec3::random_with_gen(rng, 0.0, 1.0)).unwrap();
+                    Rc::new(Lambertian::new(albedo))
+                } else if mat_roll < 0.95 {
+                    // metal
+                    let albedo = Color::try_from(Vec3::random_with_gen(rng, 0.5, 1.0)).unwrap();
+                    let fuzz = rng.gen_range(0.0..0.5);
+                    Rc::new(Metal::new(albedo, fuzz))
+                } else {
+                    // glass
+                    Rc::new(Dielectric::new(1.5))
+                };
+                world.push(Box::new(Sphere::new(center, 0.2, material)));
+            }
+        }
+    }
+
+    let material1 = Rc::new(Dielectric::new(1.5));
+    world.push(Box::new(Sphere::new(Point3::new(0.0, 1.0, 0.0), 1.0, material1)));
+
+    let material2 = Rc::new(Lambertian::new(Color::new(102, 51, 25)));
+    world.push(Box::new(Sphere::new(Point3::new(-4.0, 1.0, 0.0), 1.0, material2)));
+
+    let material3 = Rc::new(Metal::new(Color::new(178, 153, 127), 0.0));
+    world.push(Box::new(Sphere::new(Point3::new(4.0, 1.0, 0.0), 1.0, material3)));
+
+    world
+}
 
 fn ray_color_vec(r: &Ray, world: &dyn Hittable, depth: i32) -> Vec3
 {
@@ -33,38 +73,31 @@ fn ray_color_vec(r: &Ray, world: &dyn Hittable, depth: i32) -> Vec3
 
 fn main() {
     // Image
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width = 400;
+    let aspect_ratio = 3.0 / 2.0;
+    let image_width = 1200;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
-    let samples_per_pixel = 100;
+    let samples_per_pixel = 500;
     let max_depth = 50;
 
-    // World
-    let ground_material = Rc::new(Lambertian::new(Color::new(204, 204, 0)));
-    let center_material = Rc::new(Lambertian::new(Color::new(25, 51, 128)));
-    let left_material = Rc::new(Dielectric::new(1.5));
-    let right_material = Rc::new(Metal::new(Color::new(204, 153, 51), 0.0));
+    // RNG
+    let mut rng = rand::thread_rng();
 
-    let world = vec!(Sphere::new(Point3::new( 0.0, -100.5, -1.0), 100.0, ground_material),
-                     Sphere::new(Point3::new( 0.0,    0.0, -1.0),   0.5, center_material),
-                     Sphere::new(Point3::new(-1.0,    0.0, -1.0),   0.5, left_material.clone()),
-                     Sphere::new(Point3::new(-1.0,    0.0, -1.0),  -0.4, left_material),
-                     Sphere::new(Point3::new( 1.0,    0.0, -1.0),   0.5, right_material));
+    // World
+    let world = random_scene(&mut rng);
 
     // Camera
-    let look_from = Point3::new(3.0, 3.0, 2.0);
-    let look_at = Point3::new(0.0, 0.0, -1.0);
+    let look_from = Point3::new(13.0, 2.0, 3.0);
+    let look_at = Point3::new(0.0, 0.0, 0.0);
     let cam = Camera::new(look_from,
                           look_at,
                           Vec3::new(0.0, 1.0, 0.0),
                           20.0,
                           aspect_ratio,
-                          2.0,
-                          (look_from - look_at).length());
+                          0.1,
+                          10.0);
 
-    // RNG
-    let mut rng = rand::thread_rng();
 
+    // Generate
     let mut image = Vec::new();
     for j in 0..image_height {
         let mut row = Vec::new();
