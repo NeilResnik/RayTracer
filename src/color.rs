@@ -7,7 +7,7 @@ use super::vec3::Vec3;
 pub struct Color {
     red: u8,
     green: u8,
-    blue: u8
+    blue: u8,
 }
 
 impl Color {
@@ -17,7 +17,7 @@ impl Color {
     }
 
     #[inline(always)]
-    pub fn write_color<W: Write>(&self, mut writer: W) -> std::io::Result<()>{
+    pub fn write_color<W: Write>(&self, mut writer: W) -> std::io::Result<()> {
         writeln!(&mut writer, "{} {} {}", self.red, self.green, self.blue)
     }
 
@@ -45,13 +45,16 @@ impl TryFrom<Vec3> for Color {
         let vy = v.get_y();
         let vz = v.get_z();
         if vx >= 0.0 && vx <= 1.0 && vy >= 0.0 && vy <= 1.0 && vz >= 0.0 && vz <= 1.0 {
-            Ok(Color::new((vx * 255.999) as u8, (vy * 255.999) as u8, (vz * 255.999) as u8))
+            Ok(Color::new(
+                (vx * 255.999) as u8,
+                (vy * 255.999) as u8,
+                (vz * 255.999) as u8,
+            ))
         } else {
             Err(())
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

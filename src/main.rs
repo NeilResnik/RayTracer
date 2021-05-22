@@ -1,6 +1,6 @@
+use rand::prelude::*;
 use std::convert::TryFrom;
 use std::rc::Rc;
-use rand::prelude::*;
 
 use raytracer::camera::Camera;
 use raytracer::color::Color;
@@ -17,16 +17,27 @@ use raytracer::objects::sphere::Sphere;
 
 fn random_scene<R: rand::Rng + ?Sized>(rng: &mut R) -> Vec<Box<dyn Hittable>> {
     let ground_material = Rc::new(Lambertian::new(Color::new(127, 127, 127)));
-    let mut world: Vec<Box<dyn Hittable>>= vec!(Box::new(Sphere::new(Point3::new(0.0, -1000.0, 0.0), 1000.0, ground_material)));
+    let mut world: Vec<Box<dyn Hittable>> = vec![Box::new(Sphere::new(
+        Point3::new(0.0, -1000.0, 0.0),
+        1000.0,
+        ground_material,
+    ))];
 
     for a in -11..11 {
         for b in -11..11 {
-            let center = Point3::new(a as f64 + (0.9 * rng.gen::<f64>()), 0.2, b as f64 + (0.9 * rng.gen::<f64>()));
+            let center = Point3::new(
+                a as f64 + (0.9 * rng.gen::<f64>()),
+                0.2,
+                b as f64 + (0.9 * rng.gen::<f64>()),
+            );
             let mat_roll: f64 = rng.gen();
             if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
                 let material: Rc<dyn Material> = if mat_roll < 0.8 {
                     // diffuse
-                    let albedo = Color::try_from(Vec3::random_with_gen(rng, 0.0, 1.0) * Vec3::random_with_gen(rng, 0.0, 1.0)).unwrap();
+                    let albedo = Color::try_from(
+                        Vec3::random_with_gen(rng, 0.0, 1.0) * Vec3::random_with_gen(rng, 0.0, 1.0),
+                    )
+                    .unwrap();
                     Rc::new(Lambertian::new(albedo))
                 } else if mat_roll < 0.95 {
                     // metal
@@ -43,31 +54,43 @@ fn random_scene<R: rand::Rng + ?Sized>(rng: &mut R) -> Vec<Box<dyn Hittable>> {
     }
 
     let material1 = Rc::new(Dielectric::new(1.5));
-    world.push(Box::new(Sphere::new(Point3::new(0.0, 1.0, 0.0), 1.0, material1)));
+    world.push(Box::new(Sphere::new(
+        Point3::new(0.0, 1.0, 0.0),
+        1.0,
+        material1,
+    )));
 
     let material2 = Rc::new(Lambertian::new(Color::new(102, 51, 25)));
-    world.push(Box::new(Sphere::new(Point3::new(-4.0, 1.0, 0.0), 1.0, material2)));
+    world.push(Box::new(Sphere::new(
+        Point3::new(-4.0, 1.0, 0.0),
+        1.0,
+        material2,
+    )));
 
     let material3 = Rc::new(Metal::new(Color::new(178, 153, 127), 0.0));
-    world.push(Box::new(Sphere::new(Point3::new(4.0, 1.0, 0.0), 1.0, material3)));
+    world.push(Box::new(Sphere::new(
+        Point3::new(4.0, 1.0, 0.0),
+        1.0,
+        material3,
+    )));
 
     world
 }
 
-fn ray_color_vec(r: &Ray, world: &dyn Hittable, depth: i32) -> Vec3
-{
+fn ray_color_vec(r: &Ray, world: &dyn Hittable, depth: i32) -> Vec3 {
     if depth <= 0 {
         Vec3::new(0.0, 0.0, 0.0)
-    }else if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
+    } else if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
         if let Some((attenuation, scattered)) = rec.get_material().scatter(r, &rec) {
-            Vec3::from(attenuation) * ray_color_vec(&scattered, world, depth-1)
+            Vec3::from(attenuation) * ray_color_vec(&scattered, world, depth - 1)
         } else {
             Vec3::new(0.0, 0.0, 0.0)
         }
     } else {
         let unit_dir = r.get_direction().unit_vector();
         let t = 0.5 * (unit_dir.get_y() + 1.0);
-        ((1.0 - t) * Vec3::from(Color::new(255, 255, 255))) + (t * Vec3::from(Color::new(128, 179, 255)))
+        ((1.0 - t) * Vec3::from(Color::new(255, 255, 255)))
+            + (t * Vec3::from(Color::new(128, 179, 255)))
     }
 }
 
@@ -88,14 +111,15 @@ fn main() {
     // Camera
     let look_from = Point3::new(13.0, 2.0, 3.0);
     let look_at = Point3::new(0.0, 0.0, 0.0);
-    let cam = Camera::new(look_from,
-                          look_at,
-                          Vec3::new(0.0, 1.0, 0.0),
-                          20.0,
-                          aspect_ratio,
-                          0.1,
-                          10.0);
-
+    let cam = Camera::new(
+        look_from,
+        look_at,
+        Vec3::new(0.0, 1.0, 0.0),
+        20.0,
+        aspect_ratio,
+        0.1,
+        10.0,
+    );
 
     // Generate
     let mut image = Vec::new();
@@ -105,7 +129,8 @@ fn main() {
             let mut pixel_color_vec = Vec3::new(0.0, 0.0, 0.0);
             for _ in 0..samples_per_pixel {
                 let u = (i as f64 + rng.gen::<f64>()) / (image_width - 1) as f64;
-                let v = ((image_height - 1 - j) as f64 + rng.gen::<f64>()) / (image_height - 1) as f64;
+                let v =
+                    ((image_height - 1 - j) as f64 + rng.gen::<f64>()) / (image_height - 1) as f64;
                 let r = cam.get_ray(u, v);
                 pixel_color_vec += ray_color_vec(&r, &world, max_depth);
             }

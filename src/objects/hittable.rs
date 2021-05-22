@@ -15,16 +15,34 @@ pub struct HitRecord {
     normal: Vec3,
     material: Rc<dyn Material>,
     t: f64,
-    front_face: bool
+    front_face: bool,
 }
 
 impl HitRecord {
     #[inline(always)]
-    pub fn new(point: Point3, normal: Vec3, material: Rc<dyn Material>, t: f64, front_face: bool) -> HitRecord {
-        HitRecord{ point, normal, material, t, front_face }
+    pub fn new(
+        point: Point3,
+        normal: Vec3,
+        material: Rc<dyn Material>,
+        t: f64,
+        front_face: bool,
+    ) -> HitRecord {
+        HitRecord {
+            point,
+            normal,
+            material,
+            t,
+            front_face,
+        }
     }
 
-    pub fn from_outward_normal(point: Point3, t: f64, r: &Ray, outward_normal: Vec3, material: Rc<dyn Material>) -> HitRecord {
+    pub fn from_outward_normal(
+        point: Point3,
+        t: f64,
+        r: &Ray,
+        outward_normal: Vec3,
+        material: Rc<dyn Material>,
+    ) -> HitRecord {
         let front_face = r.get_direction().dot(&outward_normal) < 0.0;
         let normal = if front_face {
             outward_normal

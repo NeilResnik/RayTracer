@@ -9,13 +9,15 @@ use crate::objects::material::Material;
 use rand::random;
 
 pub struct Dielectric {
-    index_of_refraction: f64
+    index_of_refraction: f64,
 }
 
 impl Dielectric {
     #[inline(always)]
     pub fn new(index_of_refraction: f64) -> Dielectric {
-        Dielectric{ index_of_refraction }
+        Dielectric {
+            index_of_refraction,
+        }
     }
 
     #[inline(always)]
@@ -36,12 +38,16 @@ impl Material for Dielectric {
         let unit_direction = ray_in.get_direction().unit_vector();
         let cos_theta = unit_direction.neg().dot(&record.get_normal()).min(1.0);
         let sin_theta = (1.0 - cos_theta.powi(2)).sqrt();
-        let direction = if refraction_ratio * sin_theta > 1.0 
-                            || self.reflectance(cos_theta, refraction_ratio) > random::<f64>() {
+        let direction = if refraction_ratio * sin_theta > 1.0
+            || self.reflectance(cos_theta, refraction_ratio) > random::<f64>()
+        {
             unit_direction.reflect(&record.get_normal())
         } else {
             unit_direction.refract(&record.get_normal(), refraction_ratio)
         };
-        Some((Color::new(255, 255, 255), Ray::new(record.get_point(), direction)))
+        Some((
+            Color::new(255, 255, 255),
+            Ray::new(record.get_point(), direction),
+        ))
     }
 }

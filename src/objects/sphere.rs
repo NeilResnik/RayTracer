@@ -3,20 +3,24 @@ use std::rc::Rc;
 use crate::ray::Ray;
 use crate::vec3::Point3;
 
-use crate::objects::hittable::{Hittable, HitRecord};
+use crate::objects::hittable::{HitRecord, Hittable};
 use crate::objects::material::Material;
 
 #[derive(Clone)]
 pub struct Sphere {
     center: Point3,
     radius: f64,
-    material: Rc<dyn Material>
+    material: Rc<dyn Material>,
 }
 
 impl Sphere {
     #[inline(always)]
     pub fn new(center: Point3, radius: f64, material: Rc<dyn Material>) -> Sphere {
-        Sphere{ center, radius, material }
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 
     #[inline(always)]
@@ -37,7 +41,7 @@ impl Hittable for Sphere {
         let half_b = oc.dot(&r.get_direction());
         let c = oc.length_squared() - self.radius.powi(2);
 
-        let discriminant = half_b.powi(2) - (a *c);
+        let discriminant = half_b.powi(2) - (a * c);
         if discriminant < 0.0 {
             return None;
         }
@@ -53,6 +57,12 @@ impl Hittable for Sphere {
 
         let p = r.at(root);
         let outward_normal = (p - self.center) / self.radius;
-        Some(HitRecord::from_outward_normal(p, root, r, outward_normal, self.material.clone()))
+        Some(HitRecord::from_outward_normal(
+            p,
+            root,
+            r,
+            outward_normal,
+            self.material.clone(),
+        ))
     }
 }

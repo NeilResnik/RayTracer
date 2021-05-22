@@ -3,7 +3,7 @@ use super::vec3::{Point3, Vec3};
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Ray {
     origin: Point3,
-    direction: Vec3
+    direction: Vec3,
 }
 
 impl Ray {

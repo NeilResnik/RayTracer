@@ -1,7 +1,7 @@
 use std::convert::From;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-use rand::{Rng, thread_rng};
+use rand::{thread_rng, Rng};
 
 use super::color::Color;
 
@@ -9,7 +9,7 @@ use super::color::Color;
 pub struct Vec3 {
     x: f64,
     y: f64,
-    z: f64
+    z: f64,
 }
 
 pub type Point3 = Vec3;
@@ -17,7 +17,7 @@ pub type Point3 = Vec3;
 impl Vec3 {
     #[inline(always)]
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
-        Vec3 { x, y, z}
+        Vec3 { x, y, z }
     }
 
     #[inline(always)]
@@ -72,7 +72,7 @@ impl Vec3 {
         Vec3 {
             x: (self.y * rhs.z) - (self.z * rhs.y),
             y: (self.z * rhs.x) - (self.x * rhs.z),
-            z: (self.x * rhs.y) - (self.y * rhs.x)
+            z: (self.x * rhs.y) - (self.y * rhs.x),
         }
     }
 
@@ -113,6 +113,7 @@ impl Vec3 {
         self.z = (self.z * scale).sqrt().clamp(min, max);
     }
 
+    #[inline(always)]
     pub fn near_zero(&self) -> bool {
         self.x.abs() < 1e-8 && self.y.abs() < 1e-8 && self.z.abs() < 1e-8
     }
@@ -128,7 +129,7 @@ impl Vec3 {
         let r_out_parallel = (1.0 - r_out_perp.length_squared()).abs().sqrt().neg() * *normal;
         r_out_perp + r_out_parallel
     }
-} 
+}
 
 impl Add for Vec3 {
     type Output = Self;
@@ -137,7 +138,7 @@ impl Add for Vec3 {
         Vec3 {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
-            z: self.z + rhs.z
+            z: self.z + rhs.z,
         }
     }
 }
@@ -147,7 +148,7 @@ impl AddAssign for Vec3 {
         *self = Vec3 {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
-            z: self.z + rhs.z
+            z: self.z + rhs.z,
         };
     }
 }
@@ -159,7 +160,7 @@ impl Div<f64> for Vec3 {
         Vec3 {
             x: self.x / divisor,
             y: self.y / divisor,
-            z: self.z / divisor
+            z: self.z / divisor,
         }
     }
 }
@@ -171,7 +172,7 @@ impl Div for Vec3 {
         Vec3 {
             x: self.x / rhs.x,
             y: self.y / rhs.y,
-            z: self.z / rhs.z
+            z: self.z / rhs.z,
         }
     }
 }
@@ -181,7 +182,7 @@ impl DivAssign<f64> for Vec3 {
         *self = Vec3 {
             x: self.x / divisor,
             y: self.y / divisor,
-            z: self.z / divisor
+            z: self.z / divisor,
         };
     }
 }
@@ -191,7 +192,7 @@ impl DivAssign for Vec3 {
         *self = Vec3 {
             x: self.x / rhs.x,
             y: self.y / rhs.y,
-            z: self.z / rhs.z
+            z: self.z / rhs.z,
         };
     }
 }
@@ -203,7 +204,7 @@ impl Mul<f64> for Vec3 {
         Vec3 {
             x: self.x * factor,
             y: self.y * factor,
-            z: self.z * factor
+            z: self.z * factor,
         }
     }
 }
@@ -215,7 +216,7 @@ impl Mul<Vec3> for f64 {
         Vec3 {
             x: self * rhs.x,
             y: self * rhs.y,
-            z: self * rhs.z
+            z: self * rhs.z,
         }
     }
 }
@@ -227,7 +228,7 @@ impl Mul for Vec3 {
         Vec3 {
             x: self.x * rhs.x,
             y: self.y * rhs.y,
-            z: self.z * rhs.z
+            z: self.z * rhs.z,
         }
     }
 }
@@ -237,7 +238,7 @@ impl MulAssign<f64> for Vec3 {
         *self = Vec3 {
             x: self.x * factor,
             y: self.y * factor,
-            z: self.z * factor
+            z: self.z * factor,
         };
     }
 }
@@ -247,7 +248,7 @@ impl MulAssign for Vec3 {
         *self = Vec3 {
             x: self.x * rhs.x,
             y: self.y * rhs.y,
-            z: self.z * rhs.z
+            z: self.z * rhs.z,
         };
     }
 }
@@ -262,12 +263,12 @@ impl Neg for Vec3 {
 
 impl Sub for Vec3 {
     type Output = Vec3;
-    
+
     fn sub(self, rhs: Vec3) -> Vec3 {
         Vec3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
-            z: self.z - rhs.z
+            z: self.z - rhs.z,
         }
     }
 }
@@ -277,16 +278,18 @@ impl SubAssign for Vec3 {
         *self = Vec3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
-            z: self.z - rhs.z
+            z: self.z - rhs.z,
         };
     }
 }
 
 impl From<Color> for Vec3 {
     fn from(c: Color) -> Self {
-        Vec3::new(c.get_red() as f64 / 255.0,
-                  c.get_green() as f64 / 255.0,
-                  c.get_blue() as f64 / 255.0)
+        Vec3::new(
+            c.get_red() as f64 / 255.0,
+            c.get_green() as f64 / 255.0,
+            c.get_blue() as f64 / 255.0,
+        )
     }
 }
 
@@ -306,9 +309,11 @@ mod tests {
     fn test_cross_product() {
         let p1 = Vec3::new(35.0, 43.0, 55.0);
         let p2 = Vec3::new(43.0, 67.0, 83.0);
-        let expected = Vec3::new((43.0 * 83.0) - (55.0 * 67.0),
-                                   (55.0 * 43.0) - (35.0 * 83.0),
-                                   (35.0 * 67.0) - (43.0 * 43.0));
+        let expected = Vec3::new(
+            (43.0 * 83.0) - (55.0 * 67.0),
+            (55.0 * 43.0) - (35.0 * 83.0),
+            (35.0 * 67.0) - (43.0 * 43.0),
+        );
         assert_eq!(p1.cross(&p2), expected);
     }
 
