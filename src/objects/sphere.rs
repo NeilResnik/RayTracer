@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::ray::Ray;
 use crate::vec3::Point3;
@@ -10,12 +10,12 @@ use crate::objects::material::Material;
 pub struct Sphere {
     center: Point3,
     radius: f64,
-    material: Rc<dyn Material>,
+    material: Arc<dyn Material + Sync + Send>,
 }
 
 impl Sphere {
     #[inline(always)]
-    pub fn new(center: Point3, radius: f64, material: Rc<dyn Material>) -> Sphere {
+    pub fn new(center: Point3, radius: f64, material: Arc<dyn Material + Sync + Send>) -> Sphere {
         Sphere {
             center,
             radius,

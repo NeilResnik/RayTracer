@@ -1,5 +1,7 @@
-use std::convert::TryFrom;
+use std::convert::{From, TryFrom};
 use std::io::Write;
+
+use image::Rgb;
 
 use super::vec3::Vec3;
 
@@ -53,6 +55,20 @@ impl TryFrom<Vec3> for Color {
         } else {
             Err(())
         }
+    }
+}
+
+impl From<Color> for [u8; 3] {
+    #[inline(always)]
+    fn from(c: Color) -> [u8; 3] {
+        [c.get_red(), c.get_green(), c.get_blue()]
+    }
+}
+
+impl From<Color> for Rgb<u8> {
+    #[inline(always)]
+    fn from(c: Color) -> Rgb<u8> {
+        Rgb(c.into())
     }
 }
 

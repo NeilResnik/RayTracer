@@ -1,7 +1,7 @@
 use std::boxed::Box;
 use std::option::Option;
 //use std::iter::Iterator;
-use std::rc::Rc;
+use std::sync::Arc;
 use std::vec::Vec;
 
 use crate::ray::Ray;
@@ -13,7 +13,7 @@ use crate::objects::material::Material;
 pub struct HitRecord {
     point: Point3,
     normal: Vec3,
-    material: Rc<dyn Material>,
+    material: Arc<dyn Material>,
     t: f64,
     front_face: bool,
 }
@@ -23,7 +23,7 @@ impl HitRecord {
     pub fn new(
         point: Point3,
         normal: Vec3,
-        material: Rc<dyn Material>,
+        material: Arc<dyn Material>,
         t: f64,
         front_face: bool,
     ) -> HitRecord {
@@ -41,7 +41,7 @@ impl HitRecord {
         t: f64,
         r: &Ray,
         outward_normal: Vec3,
-        material: Rc<dyn Material>,
+        material: Arc<dyn Material>,
     ) -> HitRecord {
         let front_face = r.get_direction().dot(&outward_normal) < 0.0;
         let normal = if front_face {
@@ -63,7 +63,7 @@ impl HitRecord {
     }
 
     #[inline(always)]
-    pub fn get_material(&self) -> Rc<dyn Material> {
+    pub fn get_material(&self) -> Arc<dyn Material> {
         self.material.clone()
     }
 
@@ -82,7 +82,7 @@ pub trait Hittable {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }
 
-impl Hittable for Vec<Box<dyn Hittable>> {
+impl Hittable for Vec<Box<dyn Hittable + Sync + Send>> {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let mut rec = None;
         let mut closest = t_max;
@@ -96,7 +96,7 @@ impl Hittable for Vec<Box<dyn Hittable>> {
     }
 }
 
-impl<T: Hittable> Hittable for Vec<T> {
+impl<T: Hittable + Sync + Send> Hittable for Vec<T> {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let mut rec = None;
         let mut closest = t_max;
