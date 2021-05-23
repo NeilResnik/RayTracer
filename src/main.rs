@@ -1,7 +1,7 @@
 use std::convert::{From, Into, TryFrom, TryInto};
 use std::sync::Arc;
 
-use image::{ColorType, ImageFormat, save_buffer_with_format};
+use image::{save_buffer_with_format, ColorType, ImageFormat};
 use rand::prelude::*;
 use rayon::prelude::*;
 
@@ -129,21 +129,23 @@ fn main() {
         .enumerate()
         .flat_map(|(y, row)| {
             row.into_par_iter()
-               .enumerate()
-               .flat_map(|(x, _s)|{
+                .enumerate()
+                .flat_map(|(x, _s)| {
                     let mut pixel_color_vec = Vec3::new(0.0, 0.0, 0.0);
                     for _ in 0..samples_per_pixel {
                         let u = (x as f64 + random::<f64>()) / (image_width - 1) as f64;
-                        let v =
-                            ((image_height - 1 - y) as f64 + random::<f64>()) / (image_height - 1) as f64;
+                        let v = ((image_height - 1 - y) as f64 + random::<f64>())
+                            / (image_height - 1) as f64;
                         let r = cam.get_ray(u, v);
                         pixel_color_vec += ray_color_vec(&r, &world, max_depth);
                     }
                     pixel_color_vec.scale_in_range(1.0 / samples_per_pixel as f64, 0.0, 0.999);
                     let rgb_slice: [u8; 3] = Color::try_from(pixel_color_vec).unwrap().into();
                     rgb_slice
-               }).collect::<Vec<u8>>()
-           }).collect::<Vec<u8>>();
+                })
+                .collect::<Vec<u8>>()
+        })
+        .collect::<Vec<u8>>();
     // let raw_img_buf : Array1::<(usize, u8)> = Array3::<u8>::zeros((10, 10, 3))
     //                                             .into_iter()
     //                                             .enumerate()
@@ -165,10 +167,13 @@ fn main() {
     // });
 
     // Render
-    save_buffer_with_format("test.png",
-                            &raw_img_buf,
-                            image_width.try_into().unwrap(),
-                            image_height.try_into().unwrap(),
-                            ColorType::Rgb8,
-                            ImageFormat::Png).unwrap();
+    save_buffer_with_format(
+        "test.png",
+        &raw_img_buf,
+        image_width.try_into().unwrap(),
+        image_height.try_into().unwrap(),
+        ColorType::Rgb8,
+        ImageFormat::Png,
+    )
+    .unwrap();
 }
