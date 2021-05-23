@@ -146,25 +146,6 @@ fn main() {
                 .collect::<Vec<u8>>()
         })
         .collect::<Vec<u8>>();
-    // let raw_img_buf : Array1::<(usize, u8)> = Array3::<u8>::zeros((10, 10, 3))
-    //                                             .into_iter()
-    //                                             .enumerate()
-    //                                             .map(|v| { v })
-    //                                             .collect();
-    // let raw_img_buf = vec![vec![[0_u8; 3]; image_height]; image_width].par_iter()
-    //                                                                   .map();
-    // let img = ImageBuffer::from_fn(image_width, image_height, |x, y| {
-    //     let mut pixel_color_vec = Vec3::new(0.0, 0.0, 0.0);
-    //     for _ in 0..samples_per_pixel {
-    //         let u = (x as f64 + rng.gen::<f64>()) / (image_width - 1) as f64;
-    //         let v =
-    //             ((image_height - 1 - y) as f64 + rng.gen::<f64>()) / (image_height - 1) as f64;
-    //         let r = cam.get_ray(u, v);
-    //         pixel_color_vec += ray_color_vec(&r, &world, max_depth);
-    //     }
-    //     pixel_color_vec.scale_in_range(1.0 / samples_per_pixel as f64, 0.0, 0.999);
-    //     Rgb::from(Color::try_from(pixel_color_vec).unwrap())
-    // });
 
     // Render
     save_buffer_with_format(
