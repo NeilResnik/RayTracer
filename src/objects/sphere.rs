@@ -118,7 +118,7 @@ impl Hittable for Sphere {
                 self.get_center(self.time1) - radius_vec,
                 self.get_center(self.time1) + radius_vec,
             ));
-            Some(AABB::surrounding_box(b0, b1))
+            Some(Box::new(AABB::surrounding_box(*b0, *b1)))
         }
     }
 }

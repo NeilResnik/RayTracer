@@ -83,31 +83,3 @@ pub trait Hittable {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
     fn bounding_box(&self, time0: f64, time1: f64) -> Option<Box<dyn BoundingBox>>;
 }
-
-impl Hittable for Vec<Box<dyn Hittable + Sync + Send>> {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        let mut rec = None;
-        let mut closest = t_max;
-        for obj in self.iter() {
-            if let Some(hr) = obj.hit(r, t_min, closest) {
-                closest = hr.get_t();
-                rec = Some(hr);
-            }
-        }
-        rec
-    }
-}
-
-impl<T: Hittable + Sync + Send> Hittable for Vec<T> {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        let mut rec = None;
-        let mut closest = t_max;
-        for obj in self.iter() {
-            if let Some(hr) = obj.hit(r, t_min, closest) {
-                closest = hr.get_t();
-                rec = Some(hr);
-            }
-        }
-        rec
-    }
-}

@@ -37,6 +37,8 @@ impl AABB {
 
 impl BoundingBox for AABB {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> bool {
+        let mut t_min = t_min;
+        let mut t_max = t_max;
         for i in 0..3 {
             let inv_dir = 1.0 / ray.get_direction()[i];
             let mut t0 = (self.low[i] - ray.get_origin()[i]) * inv_dir;
