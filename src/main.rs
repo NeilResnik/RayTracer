@@ -19,7 +19,7 @@ use raytracer::objects::sphere::Sphere;
 
 fn random_scene<R: rand::Rng + ?Sized>(rng: &mut R) -> Vec<Box<dyn Hittable + Sync + Send>> {
     let ground_material = Arc::new(Lambertian::new(Color::new(127, 127, 127)));
-    let mut world: Vec<Box<dyn Hittable + Sync + Send>> = vec![Box::new(Sphere::new(
+    let mut world: Vec<Box<dyn Hittable + Sync + Send>> = vec![Box::new(Sphere::new_immobile(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
@@ -34,43 +34,57 @@ fn random_scene<R: rand::Rng + ?Sized>(rng: &mut R) -> Vec<Box<dyn Hittable + Sy
             );
             let mat_roll: f64 = rng.gen();
             if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
-                let material: Arc<dyn Material + Sync + Send> = if mat_roll < 0.8 {
+                if mat_roll < 0.8 {
                     // diffuse
                     let albedo = Color::try_from(
                         Vec3::random_with_gen(rng, 0.0, 1.0) * Vec3::random_with_gen(rng, 0.0, 1.0),
                     )
                     .unwrap();
-                    Arc::new(Lambertian::new(albedo))
+                    world.push(Box::new(Sphere::new(
+                        center,
+                        center + Point3::new(0.0, rng.gen_range(0.0..0.5), 0.0),
+                        0.0,
+                        1.0,
+                        0.2,
+                        Arc::new(Lambertian::new(albedo)),
+                    )));
                 } else if mat_roll < 0.95 {
                     // metal
                     let albedo = Color::try_from(Vec3::random_with_gen(rng, 0.5, 1.0)).unwrap();
                     let fuzz = rng.gen_range(0.0..0.5);
-                    Arc::new(Metal::new(albedo, fuzz))
+                    world.push(Box::new(Sphere::new_immobile(
+                        center,
+                        0.2,
+                        Arc::new(Metal::new(albedo, fuzz)),
+                    )));
                 } else {
                     // glass
-                    Arc::new(Dielectric::new(1.5))
+                    world.push(Box::new(Sphere::new_immobile(
+                        center,
+                        0.2,
+                        Arc::new(Dielectric::new(1.5)),
+                    )));
                 };
-                world.push(Box::new(Sphere::new(center, 0.2, material)));
             }
         }
     }
 
     let material1 = Arc::new(Dielectric::new(1.5));
-    world.push(Box::new(Sphere::new(
+    world.push(Box::new(Sphere::new_immobile(
         Point3::new(0.0, 1.0, 0.0),
         1.0,
         material1,
     )));
 
     let material2 = Arc::new(Lambertian::new(Color::new(102, 51, 25)));
-    world.push(Box::new(Sphere::new(
+    world.push(Box::new(Sphere::new_immobile(
         Point3::new(-4.0, 1.0, 0.0),
         1.0,
         material2,
     )));
 
     let material3 = Arc::new(Metal::new(Color::new(178, 153, 127), 0.0));
-    world.push(Box::new(Sphere::new(
+    world.push(Box::new(Sphere::new_immobile(
         Point3::new(4.0, 1.0, 0.0),
         1.0,
         material3,
@@ -98,10 +112,10 @@ fn ray_color_vec(r: &Ray, world: &dyn Hittable, depth: i32) -> Vec3 {
 
 fn main() {
     // Image
-    let aspect_ratio = 3.0 / 2.0;
-    let image_width = 1200;
+    let aspect_ratio = 16.0 / 9.0;
+    let image_width = 400;
     let image_height = (image_width as f64 / aspect_ratio) as usize;
-    let samples_per_pixel = 500;
+    let samples_per_pixel = 100;
     let max_depth = 50;
 
     // RNG
@@ -121,6 +135,8 @@ fn main() {
         aspect_ratio,
         0.1,
         10.0,
+        0.0,
+        1.0,
     );
 
     // Generate

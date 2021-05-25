@@ -47,7 +47,7 @@ impl Material for Dielectric {
         };
         Some((
             Color::new(255, 255, 255),
-            Ray::new(record.get_point(), direction),
+            Ray::new(record.get_point(), direction, ray_in.get_time()),
         ))
     }
 }

@@ -4,12 +4,17 @@ use super::vec3::{Point3, Vec3};
 pub struct Ray {
     origin: Point3,
     direction: Vec3,
+    time: f64,
 }
 
 impl Ray {
     #[inline(always)]
-    pub fn new(origin: Point3, direction: Vec3) -> Ray {
-        Ray { origin, direction }
+    pub fn new(origin: Point3, direction: Vec3, time: f64) -> Ray {
+        Ray {
+            origin,
+            direction,
+            time,
+        }
     }
 
     #[inline(always)]
@@ -20,6 +25,11 @@ impl Ray {
     #[inline(always)]
     pub fn get_direction(self) -> Vec3 {
         self.direction
+    }
+
+    #[inline(always)]
+    pub fn get_time(self) -> f64 {
+        self.time
     }
 
     #[inline(always)]

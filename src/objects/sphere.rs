@@ -8,24 +8,58 @@ use crate::objects::material::Material;
 
 #[derive(Clone)]
 pub struct Sphere {
-    center: Point3,
+    center0: Point3,
+    center1: Point3,
+    time0: f64,
+    time1: f64,
     radius: f64,
     material: Arc<dyn Material + Sync + Send>,
 }
 
 impl Sphere {
     #[inline(always)]
-    pub fn new(center: Point3, radius: f64, material: Arc<dyn Material + Sync + Send>) -> Sphere {
+    pub fn new(
+        center0: Point3,
+        center1: Point3,
+        time0: f64,
+        time1: f64,
+        radius: f64,
+        material: Arc<dyn Material + Sync + Send>,
+    ) -> Sphere {
         Sphere {
-            center,
+            center0,
+            center1,
+            time0,
+            time1,
             radius,
             material,
         }
     }
 
     #[inline(always)]
-    pub fn get_center(&self) -> Point3 {
-        self.center
+    pub fn new_immobile(
+        center: Point3,
+        radius: f64,
+        material: Arc<dyn Material + Sync + Send>,
+    ) -> Sphere {
+        Sphere {
+            center0: center,
+            center1: center,
+            time0: 0.0,
+            time1: std::f64::INFINITY,
+            radius,
+            material,
+        }
+    }
+
+    #[inline(always)]
+    pub fn get_center(&self, time: f64) -> Point3 {
+        if self.center0 == self.center1 {
+            self.center0
+        } else {
+            self.center0
+                + ((time - self.time0) / (self.time1 - self.time0)) * (self.center1 - self.center0)
+        }
     }
 
     #[inline(always)]
@@ -36,7 +70,7 @@ impl Sphere {
 
 impl Hittable for Sphere {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        let oc = r.get_origin() - self.center;
+        let oc = r.get_origin() - self.get_center(r.get_time());
         let a = r.get_direction().length_squared();
         let half_b = oc.dot(&r.get_direction());
         let c = oc.length_squared() - self.radius.powi(2);
@@ -56,7 +90,7 @@ impl Hittable for Sphere {
         }
 
         let p = r.at(root);
-        let outward_normal = (p - self.center) / self.radius;
+        let outward_normal = (p - self.get_center(r.get_time())) / self.radius;
         Some(HitRecord::from_outward_normal(
             p,
             root,

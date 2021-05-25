@@ -28,6 +28,7 @@ impl Material for Metal {
         let scattered = Ray::new(
             record.get_point(),
             reflected + (self.fuzz * Vec3::random_in_unit_sphere()),
+            ray_in.get_time(),
         );
         if scattered.get_direction().dot(&record.get_normal()) > 0.0 {
             Some((self.albedo, scattered))
