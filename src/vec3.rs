@@ -1,5 +1,5 @@
 use std::convert::From;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Index, Mul, MulAssign, Neg, Sub, SubAssign};
 
 use rand::{thread_rng, Rng};
 
@@ -194,6 +194,19 @@ impl DivAssign for Vec3 {
             y: self.y / rhs.y,
             z: self.z / rhs.z,
         };
+    }
+}
+
+impl Index<usize> for Vec3 {
+    type Output = f64;
+
+    fn index(&self, idx: usize) -> &Self::Output {
+        match idx {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("index {} out of bounds for Vec3", idx),
+        }
     }
 }
 

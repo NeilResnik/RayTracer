@@ -1,8 +1,10 @@
 use std::sync::Arc;
 
 use crate::ray::Ray;
-use crate::vec3::Point3;
+use crate::vec3::{Point3, Vec3};
 
+use crate::objects::aabb::AABB;
+use crate::objects::bounding_box::BoundingBox;
 use crate::objects::hittable::{HitRecord, Hittable};
 use crate::objects::material::Material;
 
@@ -98,5 +100,25 @@ impl Hittable for Sphere {
             outward_normal,
             self.material.clone(),
         ))
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<Box<dyn BoundingBox>> {
+        let radius_vec = Vec3::new(self.radius, self.radius, self.radius);
+        if self.center0 == self.center1 {
+            Some(Box::new(AABB::new(
+                self.center0 - radius_vec,
+                self.center0 + radius_vec,
+            )))
+        } else {
+            let b0 = Box::new(AABB::new(
+                self.get_center(self.time0) - radius_vec,
+                self.get_center(self.time0) + radius_vec,
+            ));
+            let b1 = Box::new(AABB::new(
+                self.get_center(self.time1) - radius_vec,
+                self.get_center(self.time1) + radius_vec,
+            ));
+            Some(AABB::surrounding_box(b0, b1))
+        }
     }
 }
