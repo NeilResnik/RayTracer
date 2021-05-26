@@ -1,5 +1,6 @@
-mod aabb;
+pub mod aabb;
 pub mod bounding_box;
+pub mod bvh;
 pub mod dielectric;
 pub mod hittable;
 pub mod lambertian;

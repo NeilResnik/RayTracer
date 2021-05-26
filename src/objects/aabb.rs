@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::mem::swap;
 
 use crate::ray::Ray;
@@ -14,6 +15,16 @@ impl AABB {
     #[inline(always)]
     pub fn new(low: Point3, high: Point3) -> AABB {
         AABB { low, high }
+    }
+
+    #[inline(always)]
+    pub fn get_low(&self) -> Point3 {
+        self.low
+    }
+
+    #[inline(always)]
+    pub fn get_high(&self) -> Point3 {
+        self.high
     }
 
     #[inline(always)]
@@ -53,5 +64,20 @@ impl BoundingBox for AABB {
             }
         }
         true
+    }
+
+    #[inline(always)]
+    fn get_lower(&self) -> Point3 {
+        self.get_low()
+    }
+
+    #[inline(always)]
+    fn get_upper(&self) -> Point3 {
+        self.get_high()
+    }
+
+    #[inline(always)]
+    fn cmp_axis(&self, other: &Box<dyn BoundingBox>, axis: usize) -> Ordering {
+        self.get_lower()[axis].partial_cmp(&other.get_lower()[axis]).unwrap()
     }
 }
